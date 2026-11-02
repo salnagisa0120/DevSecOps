@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+.ss * { box-sizing: border-box; }
+.ss {
+  --merah: #a84848;
+  --hijau-tua: #4a6b4a;
+  --biru: #6b6bb8;
+  --ungu: #8585d6;
+  --abu: #bdbdbd;
+  --aksen: #f04e55;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color: #1a1a1a;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- Top bar ---------- */
+.ss-top {
+  display: flex; justify-content: space-between; align-items: stretch;
+  background: #dcdcdc; height: 34px; font-size: 13px; flex-shrink: 0; z-index: 3;
+}
+.ss-brand {
+  background: #e9e9e9; border: 0; padding: 0 16px; font: inherit; font-weight: 500;
+  cursor: pointer; border-right: 1px solid #c4c4c4;
+}
+.ss-login-btn {
+  background: transparent; border: 0; font: inherit; font-size: 11px; font-weight: 600;
+  padding: 0 16px; cursor: pointer; letter-spacing: .02em;
+}
+.ss-brand:hover, .ss-login-btn:hover { background: #d0d0d0; }
+.ss-brand:focus-visible, .ss-login-btn:focus-visible, .ss button:focus-visible, .ss input:focus-visible {
+  outline: 2px solid #2b59c3; outline-offset: 2px;
+}
+
+/* ---------- Layout dengan sidebar abu ---------- */
+.ss-body { flex: 1; display: flex; min-height: 0; position: relative; }
+.ss-side { width: 64px; background: var(--abu); flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 14px; }
+.ss-side button {
+  width: 44px; height: 44px; border-radius: 10px; border: 0; background: transparent;
+  font-size: 20px; cursor: pointer;
+}
+.ss-side button:hover, .ss-side button[aria-current="page"] { background: rgba(255,255,255,.55); }
+.ss-main { flex: 1; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.ss-judul { font-size: clamp(22px, 3.4vw, 32px); font-weight: 500; margin: 0 0 40px; text-align: center; }
+
+/* ---------- Beranda ---------- */
+.ss-home { align-items: center; justify-content: flex-start; padding-top: 48px; position: relative; z-index: 1; }
+.ss-home .ss-judul { font-size: clamp(28px, 4.5vw, 44px); margin-bottom: 44px; }
+.ss-menu { display: grid; grid-template-columns: repeat(3, minmax(120px, 190px)); gap: 28px; }
+.ss-menu .tengah { grid-column: 1 / -1; justify-self: center; width: 190px; }
+.ss-pil {
+  background: #fff; border: 1px solid var(--merah); border-radius: 12px; padding: 12px 10px;
+  font: inherit; font-size: 13px; cursor: pointer; box-shadow: 0 1px 0 rgba(168,72,72,.3);
+  transition: transform .15s, box-shadow .15s;
+}
+.ss-pil:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(168,72,72,.25); }
+.ss-bentuk { position: absolute; z-index: 0; pointer-events: none; }
+.ss-lingkar { width: 320px; height: 320px; border-radius: 50%; background: var(--merah); left: -70px; bottom: -150px; }
+.ss-lingkar-kecil { width: 150px; height: 150px; border-radius: 50%; background: var(--merah); left: -60px; top: 10px; }
+.ss-segitiga-hijau { width: 130px; height: 130px; background: var(--hijau-tua); right: -30px; top: 0; clip-path: polygon(50% 0, 100% 100%, 0 70%, 25% 20%); }
+.ss-segitiga-biru { width: 90px; height: 100px; background: var(--biru); right: 24px; bottom: 0; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+
+/* ---------- Dokter ---------- */
+.ss-dokter { display: flex; gap: 56px; flex-wrap: wrap; justify-content: center; }
+.ss-dr { background: none; border: 0; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 14px; padding: 6px; border-radius: 12px; }
+.ss-avatar {
+  width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 32px; transition: transform .15s;
+}
+.ss-dr:hover .ss-avatar { transform: scale(1.07); }
+
+/* ---------- Tes ---------- */
+.ss-tes { display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; }
+.ss-kartu {
+  width: 108px; min-height: 140px; border-radius: 22px; background: var(--ungu); border: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+  padding: 14px 8px 12px; font: inherit; font-size: 11px; line-height: 1.25; cursor: pointer;
+  transition: transform .15s;
+}
+.ss-kartu:hover { transform: translateY(-3px); }
+.ss-kartu .ik { width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
+
+/* ---------- Modal ---------- */
+.ss-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,.45); z-index: 10;
+  display: grid; place-items: center; padding: 16px;
+}
+.ss-modal {
+  width: min(300px, 100%); background: #dedede; border-radius: 8px; padding: 22px 28px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.ss-modal h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+.ss-modal .info { margin: 0; font-size: 12px; text-align: center; }
+.ss-modal input {
+  width: 100%; padding: 7px 8px; border: 1px solid #c2c2c2; border-radius: 3px; background: #f4f4f4; font: inherit; font-size: 11px;
+}
+.ss-modal .err { margin: 0; color: #b3261e; font-size: 11px; align-self: flex-start; }
+.ss-aksi {
+  background: var(--aksen); color: #fff; border: 0; border-radius: 3px; padding: 7px 26px;
+  font: inherit; font-size: 10px; font-weight: 600; cursor: pointer; margin-top: 4px;
+}
+.ss-aksi:hover { background: #d93d44; }
+.ss-modal .alih { font-size: 10px; text-align: center; margin: 4px 0 0; }
+.ss-modal .alih button { background: none; border: 0; padding: 0; font: inherit; font-size: 9px; color: #2b59c3; cursor: pointer; display: block; margin: 2px auto 0; }
+.ss-tutup { align-self: flex-end; background: none; border: 0; cursor: pointer; font-size: 14px; margin: -12px -18px -4px 0; color: #555; }
+
+/* ---------- Chat ---------- */
+.ss-chat { flex: 1; display: flex; min-height: 0; }
+.ss-chat-side { width: 96px; background: #a9cfa0; flex-shrink: 0; }
+.ss-chat-side .tit { display: block; background: #d4d4d4; font-size: 11px; padding: 6px 8px; font-weight: 500; }
+.ss-chat-side button {
+  display: flex; align-items: center; gap: 6px; width: 100%; border: 0; background: transparent;
+  padding: 7px 8px; font: inherit; font-size: 11px; cursor: pointer; text-align: left;
+}
+.ss-chat-side button[aria-current="true"] { background: #7fae76; }
+.ss-chat-side button:hover { background: #95c18c; }
+.ss-mini { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; flex-shrink: 0; }
+.ss-chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.ss-chat-head { background: #d4d4d4; font-size: 10px; padding: 6px 8px; display: flex; justify-content: space-between; }
+.ss-chat-dr { background: #c9ffb0; padding: 5px 8px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.ss-pesan { flex: 1; background: #a6e6e6; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-height: 300px; }
+.ss-gelembung { max-width: 70%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; }
+.ss-gelembung.saya { align-self: flex-end; background: #fff; border-bottom-right-radius: 3px; }
+.ss-gelembung.dokter { align-self: flex-start; background: #d6f7c4; border-bottom-left-radius: 3px; }
+.ss-kosong { margin: auto; font-size: 12px; color: #355; text-align: center; }
+.ss-input { display: flex; background: #6b6b6b; }
+.ss-input input { flex: 1; border: 0; background: transparent; color: #fff; padding: 8px 10px; font: inherit; font-size: 11px; }
+.ss-input input::placeholder { color: #ddd; }
+.ss-input button { border: 0; background: #555; color: #fff; padding: 0 14px; font: inherit; font-size: 11px; cursor: pointer; }
+
+/* ---------- Placeholder ---------- */
+.ss-info { text-align: center; max-width: 340px; font-size: 14px; line-height: 1.5; }
+.ss-info button { margin-top: 18px; }
+
+@media (max-width: 560px) {
+  .ss-menu { grid-template-columns: 1fr; }
+  .ss-menu .tengah { width: 100%; }
+  .ss-side { width: 48px; }
+  .ss-dokter { gap: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ss * { transition: none !important; }
+}
