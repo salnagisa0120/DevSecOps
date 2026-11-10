@@ -146,3 +146,7 @@
 @media (prefers-reduced-motion: reduce) {
   .ss * { transition: none !important; }
 }
+
+/* ---------- Status API ---------- */
+.ss-galat { margin: 0; background: #fde7e7; color: #8a1c1c; font-size: 11px; padding: 6px 10px; }
+.ss-aksi:disabled, .ss-input button:disabled { opacity: .6; cursor: wait; }

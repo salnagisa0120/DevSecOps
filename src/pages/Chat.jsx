@@ -1,39 +1,61 @@
 import { useState, useRef, useEffect } from "react";
-import { DOKTER } from "../data/konstanta";
+import { api } from "../api";
 
-export default function Chat({ aktif, setAktif }) {
+export default function Chat({ doctors, aktif, setAktif }) {
   const [riwayat, setRiwayat] = useState({});
   const [teks, setTeks] = useState("");
+  const [memuat, setMemuat] = useState(false);
+  const [mengirim, setMengirim] = useState(false);
+  const [galat, setGalat] = useState("");
   const ujung = useRef(null);
-  const dr = DOKTER.find((d) => d.id === aktif) || DOKTER[0];
-  const pesan = riwayat[dr.id] || [];
+
+  const dr = doctors.find((d) => d.id === aktif) || doctors[0];
+  const pesan = (dr && riwayat[dr.id]) || [];
+
+  // Muat riwayat dari database saat dokter berganti
+  useEffect(() => {
+    if (!dr) return;
+    let batal = false;
+    setMemuat(true);
+    setGalat("");
+    api
+      .messages(dr.id)
+      .then((d) => !batal && setRiwayat((r) => ({ ...r, [dr.id]: d.pesan })))
+      .catch((e) => !batal && setGalat(e.message))
+      .finally(() => !batal && setMemuat(false));
+    return () => { batal = true; };
+  }, [dr?.id]);
 
   useEffect(() => {
     ujung.current?.scrollIntoView({ block: "end" });
   }, [pesan.length, aktif]);
 
-  const tambah = (id, p) =>
-    setRiwayat((r) => ({ ...r, [id]: [...(r[id] || []), p] }));
+  if (!dr) return <main className="ss-main"><p className="ss-info">Memuat…</p></main>;
 
-  const kirim = (e) => {
+  const kirim = async (e) => {
     e.preventDefault();
     const isi = teks.trim();
-    if (!isi) return;
+    if (!isi || mengirim) return;
     const id = dr.id;
-    tambah(id, { dari: "saya", isi });
     setTeks("");
-    // balasan simulasi — ganti dengan WebSocket / API Anda
-    setTimeout(
-      () => tambah(id, { dari: "dokter", isi: "Terima kasih, ceritakan lebih lanjut keluhan Anda." }),
-      900
-    );
+    setMengirim(true);
+    setGalat("");
+    try {
+      const d = await api.sendMessage(id, isi);
+      setRiwayat((r) => ({ ...r, [id]: [...(r[id] || []), ...d.pesan] }));
+    } catch (err) {
+      setGalat(err.message);
+      setTeks(isi); // kembalikan teks agar tidak hilang
+    } finally {
+      setMengirim(false);
+    }
   };
 
   return (
     <div className="ss-chat">
       <aside className="ss-chat-side" aria-label="Daftar dokter">
         <span className="tit">Dokter</span>
-        {DOKTER.map((d) => (
+        {doctors.map((d) => (
           <button key={d.id} aria-current={d.id === dr.id} onClick={() => setAktif(d.id)}>
             <span className="ss-mini" style={{ background: d.warna }}>{d.ikon}</span>
             {d.nama}
@@ -47,22 +69,25 @@ export default function Chat({ aktif, setAktif }) {
           {dr.nama}
         </div>
         <div className="ss-pesan" aria-live="polite">
-          {pesan.length === 0 && (
+          {memuat && <p className="ss-kosong">Memuat riwayat…</p>}
+          {!memuat && pesan.length === 0 && (
             <p className="ss-kosong">Belum ada pesan. Mulai percakapan dengan {dr.nama}.</p>
           )}
-          {pesan.map((p, i) => (
-            <div key={i} className={`ss-gelembung ${p.dari}`}>{p.isi}</div>
+          {pesan.map((p) => (
+            <div key={p.id} className={`ss-gelembung ${p.dari}`}>{p.isi}</div>
           ))}
           <div ref={ujung} />
         </div>
+        {galat && <p className="ss-galat" role="alert">{galat}</p>}
         <form className="ss-input" onSubmit={kirim}>
           <input
             value={teks}
             onChange={(e) => setTeks(e.target.value)}
             placeholder="Ketik pesan..."
             aria-label="Ketik pesan"
+            maxLength={1000}
           />
-          <button type="submit">Kirim</button>
+          <button type="submit" disabled={mengirim}>{mengirim ? "..." : "Kirim"}</button>
         </form>
       </section>
     </div>

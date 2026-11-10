@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./styles/sehat-selalu.css";
+import { api, getToken, setToken } from "./api";
 
 import TopBar from "./components/TopBar";
 import Sidebar from "./components/Sidebar";
@@ -12,10 +13,19 @@ import Chat from "./pages/Chat";
 export default function App() {
   const [halaman, setHalaman] = useState("beranda"); // beranda | dokter | chat | tes
   const [user, setUser] = useState(null);
+  const [doctors, setDoctors] = useState([]);
   const [modal, setModal] = useState(null); // null | "login" | "register"
   const [pesanModal, setPesanModal] = useState("");
   const [tujuan, setTujuan] = useState(null);
   const [dokterAktif, setDokterAktif] = useState("tirta");
+
+  // Ambil daftar dokter + pulihkan sesi login dari token tersimpan
+  useEffect(() => {
+    api.doctors().then(setDoctors).catch(() => {});
+    if (getToken()) {
+      api.me().then((d) => setUser(d.user.username)).catch(() => setToken(null));
+    }
+  }, []);
 
   const bukaLogin = (pesan = "", lanjut = null) => {
     setPesanModal(pesan);
@@ -43,6 +53,7 @@ export default function App() {
   };
 
   const keluar = () => {
+    setToken(null);
     setUser(null);
     setHalaman("beranda");
   };
@@ -61,9 +72,11 @@ export default function App() {
       <div className="ss-body">
         {denganSidebar && <Sidebar halaman={halaman} pindah={pindah} />}
         {halaman === "beranda" && <Beranda pindah={pindah} />}
-        {halaman === "dokter" && <DaftarDokter onPilih={pilihDokter} />}
+        {halaman === "dokter" && <DaftarDokter doctors={doctors} onPilih={pilihDokter} />}
         {halaman === "tes" && <TesMandiri />}
-        {halaman === "chat" && <Chat aktif={dokterAktif} setAktif={setDokterAktif} />}
+        {halaman === "chat" && (
+          <Chat doctors={doctors} aktif={dokterAktif} setAktif={setDokterAktif} />
+        )}
       </div>
 
       {modal && (
